@@ -8,14 +8,16 @@
 import { renderOverview } from './tabs/overview.js';
 import { renderRunning } from './tabs/running.js';
 import { renderCycling } from './tabs/cycling.js';
+import { renderActivities } from './tabs/activities.js';
 
 const TAB_KEY = 'activeTab';
 const DEFAULT_TAB = 'overview';
 
 const TABS = {
-  overview: { render: renderOverview, label: 'Overzicht' },
-  running:  { render: renderRunning,  label: 'Hardlopen' },
-  cycling:  { render: renderCycling,  label: 'Wielrennen' },
+  overview:   { render: renderOverview,   label: 'Overzicht' },
+  running:    { render: renderRunning,    label: 'Hardlopen' },
+  cycling:    { render: renderCycling,    label: 'Wielrennen' },
+  activities: { render: renderActivities, label: 'Activiteiten' },
 };
 
 // Bijhouden welke tabs al geladen zijn

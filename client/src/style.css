@@ -288,3 +288,27 @@ html, body {
 .insight-title { font-size: .82rem; font-weight: 700; color: #ccc; margin-bottom: 5px; }
 .insight-body  { font-size: .78rem; color: #888; line-height: 1.6; }
 .insight-body strong { color: #bbb; }
+
+/* ── Activities list ──────────────────────────────────────────────────────── */
+.act-list { display: flex; flex-direction: column; gap: .4rem; }
+.act-row {
+  display: flex; align-items: center; gap: .75rem;
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  border-radius: var(--radius); padding: .75rem .9rem;
+}
+.act-icon { font-size: 1.5rem; flex-shrink: 0; }
+.act-main { flex: 1; min-width: 0; }
+.act-name { font-size: .9rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.act-date { font-size: .72rem; color: var(--color-muted); margin-top: 1px; }
+.act-stats { display: flex; gap: .6rem; flex-shrink: 0; }
+.act-stat { display: flex; flex-direction: column; align-items: flex-end; min-width: 52px; }
+.act-stat-val { font-size: .85rem; font-weight: 700; line-height: 1; }
+.act-stat-lbl { font-size: .65rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: .04em; margin-top: 2px; }
+.red-hr { color: #f87171; }
+.act-load-more { text-align: center; padding: .75rem 0; }
+.btn-load-more {
+  background: var(--color-surface2); border: 1px solid var(--color-border);
+  color: var(--color-muted); border-radius: var(--radius);
+  padding: .5rem 1.5rem; font-size: .85rem; cursor: pointer;
+}
+.btn-load-more:hover { color: var(--color-text); }

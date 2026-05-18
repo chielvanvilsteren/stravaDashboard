@@ -63,3 +63,31 @@ export async function deleteActivityByStravaId(stravaId) {
   if (error) throw error;
 }
 
+// ── Push subscriptions (single-user: altijd één rij) ─────────────────────────
+
+export async function savePushSubscription(subscription) {
+  const { error } = await supabaseAdmin.from('push_subscriptions').upsert(
+    { id: 1, subscription, updated_at: new Date().toISOString() },
+    { onConflict: 'id' }
+  );
+  if (error) throw error;
+}
+
+export async function getPushSubscription() {
+  const { data, error } = await supabaseAdmin
+    .from('push_subscriptions')
+    .select('subscription')
+    .eq('id', 1)
+    .maybeSingle();
+  if (error) throw error;
+  return data?.subscription ?? null;
+}
+
+export async function deletePushSubscription() {
+  const { error } = await supabaseAdmin
+    .from('push_subscriptions')
+    .delete()
+    .eq('id', 1);
+  if (error) throw error;
+}
+

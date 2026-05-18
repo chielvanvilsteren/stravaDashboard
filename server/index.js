@@ -13,6 +13,7 @@ import webhookRouter from './routes/webhook.js';
 import activitiesRouter from './routes/activities.js';
 import setupRouter from './routes/setup.js';
 import eventsRouter from './routes/events.js';
+import pushRouter from './routes/push.js';
 import { authRateLimiter } from './middleware/rateLimiter.js';
 import { requireAuth } from './middleware/requireAuth.js';
 
@@ -69,6 +70,7 @@ app.use('/webhook', webhookRouter);
 // Protected API — requireAuth middleware
 app.use('/api', requireAuth, activitiesRouter);
 app.use('/api/events', requireAuth, eventsRouter);
+app.use('/api/push', requireAuth, pushRouter);
 
 // Health check — voor Render
 app.get('/health', (_req, res) => {

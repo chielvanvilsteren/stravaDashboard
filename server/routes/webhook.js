@@ -1,9 +1,10 @@
 'use strict';
 
 import express from 'express';
-import { deleteActivityByStravaId, upsertActivity } from '../services/supabase.js';
+import { deleteActivityByStravaId, upsertActivity, getPushSubscription } from '../services/supabase.js';
 import { fetchActivity, getValidAccessToken, normalizeActivity } from '../services/strava.js';
 import { broadcastNewActivity } from './events.js';
+import { webpush } from './push.js';
 
 const router = express.Router();
 
@@ -44,6 +45,25 @@ router.post('/strava', async (req, res) => {
       await upsertActivity(normalized);
       if (aspect_type === 'create') {
         broadcastNewActivity(normalized);
+        // Web Push — stuur OS-notificatie (ook als app gesloten is)
+        try {
+          const sub = await getPushSubscription();
+          if (sub && process.env.VAPID_PUBLIC_KEY) {
+            const icons = { Run: '🏃', Ride: '🚴', Walk: '🚶', Hike: '🥾' };
+            const icon  = icons[normalized.type] ?? '⚡';
+            await webpush.sendNotification(
+              sub,
+              JSON.stringify({
+                title: `${icon} Nieuwe activiteit`,
+                body:  normalized.name,
+                url:   process.env.APP_URL ?? '/',
+              })
+            );
+          }
+        } catch (pushErr) {
+          // Push mislukt (bijv. subscription verlopen) — niet fataal
+          console.warn('Push notification failed:', pushErr.message);
+        }
       }
     }
 

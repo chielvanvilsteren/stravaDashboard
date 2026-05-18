@@ -108,6 +108,15 @@ html, body {
   padding-bottom: env(safe-area-inset-bottom);
   order: 1; /* bottom */
 }
+/* Vul de home-indicator zone met de tab-bar kleur */
+.tab-bar::after {
+  content: '';
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: env(safe-area-inset-bottom);
+  background: var(--color-surface);
+  z-index: 1;
+}
 .tab-btn {
   flex: 1; background: none; border: none; cursor: pointer;
   color: var(--color-muted); padding: .75rem .4rem;

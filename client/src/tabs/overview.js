@@ -11,13 +11,10 @@ import {
   rollingAverage, normalizeScores, groupByWeek, renderEmptyChart,
 } from '../charts/shared.js';
 
-let Chart;
+import { Chart, registerables } from 'chart.js';
+Chart.register(...registerables);
+
 async function getChart() {
-  if (!Chart) {
-    Chart = (await import('https://cdn.jsdelivr.net/npm/chart.js@4/+esm')).Chart;
-    const { registerables } = await import('https://cdn.jsdelivr.net/npm/chart.js@4/+esm');
-    Chart.register(...registerables);
-  }
   return Chart;
 }
 

@@ -130,9 +130,11 @@ function renderKPIs(container, runs) {
     effChange = ((last.efficiency_score - first.efficiency_score) / first.efficiency_score) * 100;
   }
 
-  let paceChange = null;
-  if (first.pace_min_km && last.pace_min_km) {
-    paceChange = first.pace_min_km - last.pace_min_km;
+  // Tempo bij vaste HR (145-155 bpm): eerste vs laatste vergelijkbare run
+  const fixedHRRuns = runs.filter((r) => r.avg_heartrate >= 145 && r.avg_heartrate <= 155 && r.pace_min_km);
+  let paceAtHRDelta = null;
+  if (fixedHRRuns.length >= 2) {
+    paceAtHRDelta = fixedHRRuns[0].pace_min_km - fixedHRRuns[fixedHRRuns.length - 1].pace_min_km;
   }
 
   let hrDelta = null;
@@ -159,12 +161,12 @@ function renderKPIs(container, runs) {
     },
     {
       icon: '🚀',
-      value: paceChange !== null ? (paceChange > 0 ? '–' : '+') + Math.abs(paceChange).toFixed(2) + ' min/km' : '—',
-      label: 'Tempoverbetering',
-      delta: first.pace_min_km && last.pace_min_km
-        ? `${formatPace(first.pace_min_km)} → ${formatPace(last.pace_min_km)} min/km`
-        : null,
-      color: paceChange > 0 ? 'green' : paceChange < 0 ? 'red' : '',
+      value: paceAtHRDelta !== null ? (paceAtHRDelta > 0 ? '–' : '+') + Math.abs(paceAtHRDelta).toFixed(2) + ' min/km' : '—',
+      label: 'Tempo bij 145–155 bpm',
+      delta: fixedHRRuns.length >= 2
+        ? `${formatPace(fixedHRRuns[0].pace_min_km)} → ${formatPace(fixedHRRuns[fixedHRRuns.length - 1].pace_min_km)} min/km`
+        : 'Onvoldoende runs in HR-zone',
+      color: paceAtHRDelta > 0 ? 'green' : paceAtHRDelta < 0 ? 'red' : '',
     },
     {
       icon: '❤️',

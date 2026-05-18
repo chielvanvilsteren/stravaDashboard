@@ -12,8 +12,8 @@ import {
   renderWeeklyVolume, renderElevation, renderMonthComparison,
 } from '../charts/cycling/index.js';
 
-export async function renderCycling(panel) {
-  const { activities: rides = [] } = await fetchActivities({ type: 'Ride', limit: 100 });
+export async function renderCycling(panel, { from, to } = {}) {
+  const { activities: rides = [] } = await fetchActivities({ type: 'Ride', limit: 100, from, to });
 
   if (!rides.length) {
     panel.innerHTML = `

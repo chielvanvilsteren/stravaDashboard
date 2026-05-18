@@ -20,6 +20,25 @@ const TABS = {
   activities: { render: renderActivities, label: 'Activiteiten' },
 };
 
+// Jaar-filter state
+let selectedYear = new Date().getFullYear();
+
+export function getYearFilter() {
+  if (!selectedYear) return {};
+  return {
+    from: `${selectedYear}-01-01`,
+    to:   `${selectedYear}-12-31`,
+  };
+}
+
+export function setYear(year) {
+  selectedYear = year ? Number(year) : null;
+  // Herlaad alle tabs zodat ze de nieuwe filter gebruiken
+  loaded.clear();
+  const current = localStorage.getItem(TAB_KEY) ?? DEFAULT_TAB;
+  loadTab(current);
+}
+
 // Bijhouden welke tabs al geladen zijn
 const loaded = new Set();
 
@@ -41,7 +60,7 @@ export function initNav() {
   // Herlaad actieve tab na sync
   window.addEventListener('strava:synced', () => {
     const current = localStorage.getItem(TAB_KEY) ?? DEFAULT_TAB;
-    loaded.delete(current);
+    loaded.clear();
     loadTab(current);
   });
 }
@@ -76,7 +95,7 @@ async function loadTab(tabId) {
   panel.innerHTML = '<div class="loading"><div class="spinner"></div> Laden…</div>';
 
   try {
-    await TABS[tabId].render(panel);
+    await TABS[tabId].render(panel, getYearFilter());
   } catch (err) {
     if (err.offline) {
       panel.innerHTML = `

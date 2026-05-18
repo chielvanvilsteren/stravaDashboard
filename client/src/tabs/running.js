@@ -12,8 +12,8 @@ import {
   renderWeeklyVolume, renderCadence, renderMonthComparison,
 } from '../charts/running/index.js';
 
-export async function renderRunning(panel) {
-  const { activities: runs = [] } = await fetchActivities({ type: 'Run', limit: 100 });
+export async function renderRunning(panel, { from, to } = {}) {
+  const { activities: runs = [] } = await fetchActivities({ type: 'Run', limit: 100, from, to });
 
   if (!runs.length) {
     panel.innerHTML = `

@@ -8,7 +8,7 @@
 
 import './style.css';
 import { checkSession, login } from './auth.js';
-import { initNav } from './nav.js';
+import { initNav, setYear } from './nav.js';
 
 // ── Service Worker registratie ────────────────────────────────────────────────
 if ('serviceWorker' in navigator) {
@@ -79,6 +79,20 @@ async function init() {
   }
 
   document.getElementById('app-screen').classList.remove('hidden');
+
+  // Jaar-selector vullen
+  const yearSelect = document.getElementById('year-select');
+  const currentYear = new Date().getFullYear();
+  const startYear = 2020;
+  for (let y = currentYear; y >= startYear; y--) {
+    const opt = document.createElement('option');
+    opt.value = y;
+    opt.textContent = y;
+    yearSelect.appendChild(opt);
+  }
+  yearSelect.value = currentYear;
+  yearSelect.addEventListener('change', () => setYear(yearSelect.value));
+
   initNav();
 
   // Sync knop

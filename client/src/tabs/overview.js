@@ -18,12 +18,12 @@ async function getChart() {
   return Chart;
 }
 
-export async function renderOverview(panel) {
+export async function renderOverview(panel, { from, to } = {}) {
   // Haal data parallel op
   const [summaryData, runData, rideData] = await Promise.all([
     fetchSummary(),
-    fetchActivities({ type: 'Run', limit: 100 }),
-    fetchActivities({ type: 'Ride', limit: 100 }),
+    fetchActivities({ type: 'Run', limit: 100, from, to }),
+    fetchActivities({ type: 'Ride', limit: 100, from, to }),
   ]);
 
   const runs  = runData.activities ?? [];

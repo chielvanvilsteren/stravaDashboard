@@ -10,14 +10,14 @@ import { formatKm, formatDuration, formatDate, formatPace } from '../charts/shar
 
 const PAGE_SIZE = 30;
 
-export async function renderActivities(panel) {
+export async function renderActivities(panel, { from, to } = {}) {
   panel.innerHTML = `<div class="loading"><div class="spinner"></div> Laden…</div>`;
 
   let offset = 0;
   let allActivities = [];
 
   try {
-    const { activities } = await fetchActivities({ limit: 100, offset: 0 });
+    const { activities } = await fetchActivities({ limit: 100, offset: 0, from, to });
     allActivities = activities ?? [];
   } catch {
     panel.innerHTML = `<div class="empty-state"><p>Kon activiteiten niet laden.</p></div>`;

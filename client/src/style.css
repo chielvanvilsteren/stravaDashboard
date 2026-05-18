@@ -223,3 +223,68 @@ html, body {
   .kpi-grid { grid-template-columns: repeat(4, 1fr); }
   .chart-wrap { height: 280px; }
 }
+
+/* ── Section labels ───────────────────────────────────────────────────────── */
+.section-label {
+  font-size: .68rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1.4px; color: var(--color-muted);
+  padding-left: 10px; border-left: 3px solid var(--color-strava);
+  margin-top: .25rem;
+}
+
+/* ── KPI row (icon style) ─────────────────────────────────────────────────── */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: .75rem;
+}
+.kpi {
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  border-radius: 14px; padding: 1rem 1.1rem;
+  display: flex; align-items: center; gap: .85rem;
+}
+.kpi-icon { font-size: 1.9rem; flex-shrink: 0; }
+.kpi-text { min-width: 0; }
+.kpi .kpi-value { font-size: 1.5rem; font-weight: 800; line-height: 1; }
+.kpi .kpi-label { font-size: .68rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: .05em; margin-top: 3px; }
+.kpi-delta { font-size: .72rem; font-weight: 600; margin-top: 2px; }
+.orange { color: var(--color-strava); }
+.green  { color: var(--color-success); }
+.blue   { color: var(--color-ride); }
+.purple { color: #a78bfa; }
+.red    { color: var(--color-danger); }
+
+/* ── Grid layouts ─────────────────────────────────────────────────────────── */
+.grid-2 { display: grid; grid-template-columns: 1fr; gap: .75rem; }
+@media (min-width: 700px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+
+/* ── Card enhancements ────────────────────────────────────────────────────── */
+.card-sub {
+  font-size: .75rem; color: var(--color-muted);
+  margin-bottom: .85rem; line-height: 1.5;
+}
+.card-sub strong { color: #9ca3c8; }
+.formula {
+  display: inline-block; background: #0d0f18;
+  border: 1px solid #2a2d3a; border-radius: 6px;
+  padding: 4px 10px; font-family: monospace; font-size: .78rem;
+  color: #a78bfa; margin-bottom: .5rem;
+}
+
+/* ── Insight cards (new style) ────────────────────────────────────────────── */
+.insights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: .75rem;
+}
+.insight {
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-strava);
+  border-radius: 14px; padding: .9rem 1rem;
+}
+.insight.good { border-left-color: var(--color-success); }
+.insight.warn { border-left-color: var(--color-warning); }
+.insight.info { border-left-color: var(--color-ride); }
+.insight-title { font-size: .82rem; font-weight: 700; color: #ccc; margin-bottom: 5px; }
+.insight-body  { font-size: .78rem; color: #888; line-height: 1.6; }
+.insight-body strong { color: #bbb; }

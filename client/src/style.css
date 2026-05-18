@@ -350,6 +350,30 @@ html, body {
 }
 .btn-load-more:hover { color: var(--color-text); }
 
+/* ── Fun calorieën ───────────────────────────────────────────────────────────── */
+.fun-empty { color: var(--color-muted); font-size: .85rem; }
+.fun-averages {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: .5rem; margin-bottom: .9rem;
+}
+.fun-avg-item { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.fun-avg-val  { font-size: 1.2rem; font-weight: 700; color: var(--color-strava); }
+.fun-avg-lbl  { font-size: .65rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: .04em; margin-top: 1px; }
+.fun-intro    { font-size: .8rem; color: var(--color-muted); margin-bottom: .6rem; }
+.fun-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: .5rem;
+}
+.fun-item {
+  display: flex; align-items: center; gap: .6rem;
+  background: var(--color-surface2); border-radius: var(--radius);
+  padding: .6rem .75rem;
+}
+.fun-emoji  { font-size: 1.6rem; flex-shrink: 0; }
+.fun-info   { display: flex; flex-direction: column; min-width: 0; }
+.fun-count  { font-size: 1.05rem; font-weight: 700; line-height: 1; }
+.fun-name   { font-size: .7rem; color: var(--color-muted); margin-top: 2px; }
+
 /* ── Toast-notificaties ──────────────────────────────────────────────────────── */
 .toast {
   position: fixed;

@@ -80,6 +80,9 @@ html, body {
 .app-header {
   display: flex; align-items: center; gap: .5rem;
   padding: .6rem 1rem .6rem 1.2rem;
+  padding-top: max(.6rem, env(safe-area-inset-top));
+  padding-left: max(1.2rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
   order: -1;
@@ -102,6 +105,7 @@ html, body {
 .tab-bar {
   display: flex; background: var(--color-surface);
   border-top: 1px solid var(--color-border);
+  padding-bottom: env(safe-area-inset-bottom);
   order: 1; /* bottom */
 }
 .tab-btn {
@@ -214,6 +218,25 @@ html, body {
 }
 #install-dismiss {
   background: none; color: var(--color-muted); padding: .3rem;
+}
+
+/* ── Notificatie-toestemming banner ─────────────────────────────────────────── */
+.notif-banner {
+  position: fixed; bottom: 4.5rem; left: .75rem; right: .75rem;
+  background: var(--color-surface2); border: 1px solid var(--color-strava);
+  border-radius: var(--radius); padding: .75rem 1rem;
+  display: flex; align-items: center; gap: .75rem;
+  box-shadow: var(--shadow); z-index: 101; font-size: .875rem;
+}
+.notif-banner span { flex: 1; }
+.notif-enable-btn {
+  background: var(--color-strava); color: #fff; border: none;
+  border-radius: var(--radius); padding: .4rem .9rem;
+  font-size: .8rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+}
+.notif-dismiss-btn {
+  background: none; border: none; color: var(--color-muted);
+  font-size: 1rem; cursor: pointer; padding: .3rem; line-height: 1;
 }
 
 /* ── Offline banner ───────────────────────────────────────────────────────── */

@@ -8,6 +8,7 @@
 import { apiFetch } from './api.js';
 
 const ICONS = { Run: '🏃', Ride: '🚴', Walk: '🚶', Hike: '🥾' };
+const NOTIF_DISMISSED_KEY = 'notifBannerDismissed';
 
 export async function initNotifications() {
   // ── SSE ───────────────────────────────────────────────────────────────────
@@ -21,32 +22,55 @@ export async function initNotifications() {
     } catch { /* ongeldige payload */ }
   });
 
-  // ── Web Push ──────────────────────────────────────────────────────────────
+  // ── Web Push setup ────────────────────────────────────────────────────────
   if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+
+  // Al toestemming gekregen → meteen inschrijven (geen banner nodig)
+  if (Notification.permission === 'granted') {
+    await _subscribe();
+    return;
+  }
+
+  // Geweigerd → niets meer doen
   if (Notification.permission === 'denied') return;
 
+  // Banner al weggedrukt → niet opnieuw tonen
+  if (localStorage.getItem(NOTIF_DISMISSED_KEY)) return;
+
+  // Toon banner met expliciete "Inschakelen"-knop
+  const banner = document.getElementById('notif-banner');
+  if (!banner) return;
+  banner.classList.remove('hidden');
+
+  document.getElementById('notif-enable-btn').addEventListener('click', async () => {
+    banner.classList.add('hidden');
+    const permission = await Notification.requestPermission();
+    if (permission === 'granted') {
+      await _subscribe();
+      showToast('🔔 Meldingen ingeschakeld!');
+    }
+  }, { once: true });
+
+  document.getElementById('notif-dismiss-btn').addEventListener('click', () => {
+    banner.classList.add('hidden');
+    localStorage.setItem(NOTIF_DISMISSED_KEY, '1');
+  }, { once: true });
+}
+
+async function _subscribe() {
   try {
-    // Haal VAPID public key op
     const { publicKey } = await apiFetch('/api/push/vapid-key');
     if (!publicKey) return;
 
     const reg = await navigator.serviceWorker.ready;
-
-    // Al geabonneerd? Dan niets te doen
     const existing = await reg.pushManager.getSubscription();
-    if (existing) return;
+    if (existing) return; // al ingeschreven
 
-    // Vraag toestemming (wordt één keer getoond door de browser)
-    const permission = await Notification.requestPermission();
-    if (permission !== 'granted') return;
-
-    // Abonneer
     const subscription = await reg.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(publicKey),
     });
 
-    // Stuur subscription naar server
     await apiFetch('/api/push/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

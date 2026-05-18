@@ -9,6 +9,7 @@
 import './style.css';
 import { checkSession, login } from './auth.js';
 import { initNav, setYear } from './nav.js';
+import { initNotifications } from './notifications.js';
 
 // ── Service Worker registratie ────────────────────────────────────────────────
 if ('serviceWorker' in navigator) {
@@ -94,6 +95,7 @@ async function init() {
   yearSelect.addEventListener('change', () => setYear(yearSelect.value));
 
   initNav();
+  initNotifications();
 
   // Sync knop
   document.getElementById('sync-btn').addEventListener('click', async () => {

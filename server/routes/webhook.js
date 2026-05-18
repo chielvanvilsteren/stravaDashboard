@@ -3,6 +3,7 @@
 import express from 'express';
 import { deleteActivityByStravaId, upsertActivity } from '../services/supabase.js';
 import { fetchActivity, getValidAccessToken, normalizeActivity } from '../services/strava.js';
+import { broadcastNewActivity } from './events.js';
 
 const router = express.Router();
 
@@ -39,7 +40,11 @@ router.post('/strava', async (req, res) => {
     if (aspect_type === 'create' || aspect_type === 'update') {
       const accessToken  = await getValidAccessToken();
       const rawActivity  = await fetchActivity(accessToken, object_id);
-      await upsertActivity(normalizeActivity(rawActivity));
+      const normalized   = normalizeActivity(rawActivity);
+      await upsertActivity(normalized);
+      if (aspect_type === 'create') {
+        broadcastNewActivity(normalized);
+      }
     }
 
     if (aspect_type === 'delete') {

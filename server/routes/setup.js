@@ -26,7 +26,15 @@ router.get('/connect-strava', requireAuth, async (req, res) => {
   const existing = await getTokens().catch(() => null);
 
   const state = crypto.randomBytes(24).toString('hex');
-  req.session.setupOAuthState = state;
+
+  // Sla CSRF state op als gesigneerde cookie (10 min geldig)
+  res.cookie('oauth_state', state, {
+    signed: true,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 10 * 60 * 1000,
+  });
 
   const params = new URLSearchParams({
     client_id:     process.env.STRAVA_CLIENT_ID,
@@ -47,10 +55,10 @@ router.get('/callback', async (req, res) => {
   if (error) return res.redirect('/?error=strava_access_denied');
 
   // Valideer CSRF state
-  if (!state || state !== req.session.setupOAuthState) {
+  if (!state || state !== req.signedCookies.oauth_state) {
     return res.status(403).send('Ongeldige OAuth state. Probeer opnieuw via /setup/connect-strava.');
   }
-  delete req.session.setupOAuthState;
+  res.clearCookie('oauth_state');
 
   if (!code || typeof code !== 'string') {
     return res.status(400).send('Ontbrekende authorization code.');

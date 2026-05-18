@@ -97,6 +97,11 @@ async function init() {
     }
   });
 
+  // Strava koppelen
+  document.getElementById('connect-strava-btn').addEventListener('click', () => {
+    window.location.href = '/setup/connect-strava';
+  });
+
   // Logout knop
   document.getElementById('logout-btn').addEventListener('click', async () => {
     const { logout } = await import('./auth.js');

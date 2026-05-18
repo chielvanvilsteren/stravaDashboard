@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: strava-conditie
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: node server/index.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # ── Overige secrets instellen via Render Dashboard → Environment ──
+      # Voeg hier NOOIT echte waarden toe, gebruik het Render dashboard:
+      #   SUPABASE_URL
+      #   SUPABASE_SERVICE_ROLE_KEY
+      #   VITE_SUPABASE_URL
+      #   VITE_SUPABASE_ANON_KEY
+      #   STRAVA_CLIENT_ID
+      #   STRAVA_CLIENT_SECRET
+      #   STRAVA_WEBHOOK_VERIFY_TOKEN
+      #   SESSION_SECRET
+      #   TOKEN_ENCRYPTION_KEY
+      #   APP_URL

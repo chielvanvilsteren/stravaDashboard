@@ -1,0 +1,98 @@
+/**
+ * main.js — App entry point
+ * - Registreert de service worker
+ * - Controleert sessie via /auth/me
+ * - Toont login of app op basis van sessie
+ * - Beheert PWA install banner en offline indicator
+ */
+
+import './style.css';
+import { checkSession } from './auth.js';
+import { initNav } from './nav.js';
+
+// ── Service Worker registratie ────────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker
+    .register('/sw.js')
+    .catch((err) => console.warn('SW registration failed:', err));
+}
+
+// ── Offline indicator ─────────────────────────────────────────────────────────
+const offlineIndicator = document.getElementById('offline-indicator');
+window.addEventListener('offline', () => offlineIndicator.classList.remove('hidden'));
+window.addEventListener('online', () => offlineIndicator.classList.add('hidden'));
+if (!navigator.onLine) offlineIndicator.classList.remove('hidden');
+
+// ── PWA Install banner ────────────────────────────────────────────────────────
+let deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  const banner = document.getElementById('install-banner');
+  banner.classList.remove('hidden');
+});
+
+document.getElementById('install-btn').addEventListener('click', async () => {
+  if (!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  const { outcome } = await deferredInstallPrompt.userChoice;
+  if (outcome === 'accepted') {
+    document.getElementById('install-banner').classList.add('hidden');
+  }
+  deferredInstallPrompt = null;
+});
+
+document.getElementById('install-dismiss').addEventListener('click', () => {
+  document.getElementById('install-banner').classList.add('hidden');
+});
+
+// ── Login error uit URL ────────────────────────────────────────────────────────
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('error')) {
+  const errEl = document.getElementById('login-error');
+  const errorMessages = {
+    access_denied: 'Je hebt de toegang geweigerd. Probeer opnieuw.',
+    auth_failed: 'Inloggen mislukt. Probeer het opnieuw.',
+  };
+  errEl.textContent = errorMessages[urlParams.get('error')] ?? 'Er is een fout opgetreden.';
+  errEl.classList.remove('hidden');
+  // Verwijder error uit URL zonder reload
+  window.history.replaceState({}, '', '/');
+}
+
+// ── App initialisatie ─────────────────────────────────────────────────────────
+async function init() {
+  const user = await checkSession();
+
+  if (!user) {
+    document.getElementById('login-screen').classList.remove('hidden');
+    return;
+  }
+
+  document.getElementById('app-screen').classList.remove('hidden');
+  initNav();
+
+  // Sync knop
+  document.getElementById('sync-btn').addEventListener('click', async () => {
+    const btn = document.getElementById('sync-btn');
+    btn.textContent = '⟳';
+    btn.style.animation = 'spin .7s linear infinite';
+    try {
+      const { apiFetch } = await import('./api.js');
+      await apiFetch('/api/sync', { method: 'POST' });
+      // Herlaad huidige tab
+      window.dispatchEvent(new CustomEvent('strava:synced'));
+    } finally {
+      btn.style.animation = '';
+      btn.textContent = '⟳';
+    }
+  });
+
+  // Logout knop
+  document.getElementById('logout-btn').addEventListener('click', async () => {
+    const { logout } = await import('./auth.js');
+    await logout();
+  });
+}
+
+init();

@@ -1,0 +1,205 @@
+/* ── Reset & Base ──────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --color-bg:        #0d0f18;
+  --color-surface:   #161926;
+  --color-surface2:  #1e2235;
+  --color-border:    #2a2f45;
+  --color-text:      #e8eaf6;
+  --color-muted:     #8890b0;
+  --color-strava:    #fc4c02;
+  --color-run:       #fc4c02;
+  --color-ride:      #3b82f6;
+  --color-success:   #22c55e;
+  --color-warning:   #f59e0b;
+  --color-danger:    #ef4444;
+  --font:            'Inter', system-ui, sans-serif;
+  --radius:          8px;
+  --shadow:          0 2px 12px rgba(0,0,0,.4);
+}
+
+html, body {
+  height: 100%;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Screens ──────────────────────────────────────────────────────────────── */
+.screen { min-height: 100dvh; }
+.hidden { display: none !important; }
+
+/* ── Login ────────────────────────────────────────────────────────────────── */
+.login-container {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; min-height: 100dvh; padding: 2rem;
+  text-align: center; gap: 1.2rem;
+}
+.login-logo { font-size: 3.5rem; }
+.login-container h1 { font-size: 1.8rem; font-weight: 700; }
+.login-container p  { color: var(--color-muted); }
+.btn-strava {
+  display: inline-flex; align-items: center; gap: .6rem;
+  background: var(--color-strava); color: #fff;
+  border-radius: var(--radius); padding: .8rem 1.6rem;
+  font-weight: 600; font-size: 1rem;
+  text-decoration: none; border: none; cursor: pointer;
+  transition: opacity .15s;
+}
+.btn-strava:hover { opacity: .85; }
+.login-error { color: var(--color-danger); font-size: .9rem; }
+
+/* ── App Layout ───────────────────────────────────────────────────────────── */
+#app-screen {
+  display: flex; flex-direction: column; height: 100dvh; overflow: hidden;
+}
+.app-header {
+  display: flex; align-items: center; gap: .5rem;
+  padding: .6rem 1rem .6rem 1.2rem;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  order: -1;
+}
+.app-title { flex: 1; font-weight: 700; font-size: 1.1rem; color: var(--color-strava); }
+.btn-icon {
+  background: none; border: none; cursor: pointer;
+  color: var(--color-muted); font-size: 1.3rem;
+  padding: .3rem .4rem; border-radius: var(--radius);
+  transition: color .15s;
+}
+.btn-icon:hover { color: var(--color-text); }
+
+/* ── Tab bar ──────────────────────────────────────────────────────────────── */
+.tab-bar {
+  display: flex; background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  order: 1; /* bottom */
+}
+.tab-btn {
+  flex: 1; background: none; border: none; cursor: pointer;
+  color: var(--color-muted); padding: .75rem .4rem;
+  font-size: .78rem; font-weight: 500;
+  display: flex; flex-direction: column; align-items: center; gap: .2rem;
+  transition: color .15s;
+  border-top: 3px solid transparent;
+}
+.tab-btn:hover { color: var(--color-text); }
+.tab-btn[aria-selected="true"] {
+  color: var(--color-strava);
+  border-top-color: var(--color-strava);
+}
+
+/* ── Tab content ──────────────────────────────────────────────────────────── */
+.tab-content { flex: 1; overflow-y: auto; }
+.tab-panel { padding: 1rem; display: flex; flex-direction: column; gap: 1.2rem; }
+
+/* ── Cards & Sections ─────────────────────────────────────────────────────── */
+.card {
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  border-radius: var(--radius); padding: 1rem;
+}
+.card-title {
+  font-size: .8rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .06em; color: var(--color-muted); margin-bottom: .75rem;
+}
+
+/* ── KPI grid ─────────────────────────────────────────────────────────────── */
+.kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+.kpi-card {
+  background: var(--color-surface2); border-radius: var(--radius);
+  padding: .85rem; display: flex; flex-direction: column; gap: .25rem;
+}
+.kpi-label { font-size: .7rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: .05em; }
+.kpi-value { font-size: 1.6rem; font-weight: 700; line-height: 1; }
+.kpi-sub   { font-size: .75rem; color: var(--color-muted); }
+.kpi-up    { color: var(--color-success); }
+.kpi-down  { color: var(--color-danger); }
+
+/* ── Chart container ──────────────────────────────────────────────────────── */
+.chart-wrap { position: relative; height: 220px; }
+
+/* ── Activity list ────────────────────────────────────────────────────────── */
+.activity-list { display: flex; flex-direction: column; gap: .5rem; }
+.activity-item {
+  display: flex; align-items: center; gap: .75rem;
+  padding: .65rem .75rem; background: var(--color-surface2);
+  border-radius: var(--radius);
+}
+.activity-icon { font-size: 1.3rem; }
+.activity-info { flex: 1; min-width: 0; }
+.activity-name { font-size: .9rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.activity-meta { font-size: .75rem; color: var(--color-muted); }
+.activity-stat { text-align: right; font-size: .85rem; font-weight: 600; }
+
+/* ── Insight box ──────────────────────────────────────────────────────────── */
+.insights { display: flex; flex-direction: column; gap: .5rem; }
+.insight-item {
+  display: flex; align-items: flex-start; gap: .5rem;
+  padding: .65rem .75rem; background: var(--color-surface2);
+  border-radius: var(--radius); font-size: .85rem;
+}
+.insight-icon { flex-shrink: 0; font-size: 1rem; }
+.insight-warning { border-left: 3px solid var(--color-warning); }
+.insight-positive { border-left: 3px solid var(--color-success); }
+
+/* ── Empty state ──────────────────────────────────────────────────────────── */
+.empty-state {
+  text-align: center; padding: 2.5rem 1rem; color: var(--color-muted);
+}
+.empty-state p { margin-top: .5rem; font-size: .9rem; }
+
+/* ── Loading spinner ──────────────────────────────────────────────────────── */
+.loading {
+  display: flex; align-items: center; justify-content: center;
+  padding: 3rem; color: var(--color-muted);
+}
+.spinner {
+  width: 28px; height: 28px; border: 3px solid var(--color-border);
+  border-top-color: var(--color-strava); border-radius: 50%;
+  animation: spin .7s linear infinite; margin-right: .75rem;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Calendar heatmap ─────────────────────────────────────────────────────── */
+.activity-calendar { display: flex; flex-wrap: wrap; gap: 3px; }
+.cal-dot {
+  width: 12px; height: 12px; border-radius: 3px;
+  background: var(--color-surface2);
+}
+.cal-dot.run  { background: var(--color-run); }
+.cal-dot.ride { background: var(--color-ride); }
+
+/* ── PWA Install banner ───────────────────────────────────────────────────── */
+.install-banner {
+  position: fixed; bottom: 4rem; left: .75rem; right: .75rem;
+  background: var(--color-surface); border: 1px solid var(--color-border);
+  border-radius: var(--radius); padding: .75rem 1rem;
+  display: flex; align-items: center; gap: .75rem;
+  box-shadow: var(--shadow); z-index: 100; font-size: .85rem;
+}
+.install-banner span { flex: 1; }
+.install-banner button {
+  background: var(--color-strava); color: #fff; border: none;
+  border-radius: var(--radius); padding: .4rem .85rem;
+  font-size: .8rem; cursor: pointer; white-space: nowrap;
+}
+#install-dismiss {
+  background: none; color: var(--color-muted); padding: .3rem;
+}
+
+/* ── Offline banner ───────────────────────────────────────────────────────── */
+.offline-banner {
+  position: fixed; top: 0; left: 0; right: 0;
+  background: var(--color-warning); color: #000;
+  text-align: center; padding: .4rem; font-size: .8rem; z-index: 200;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (min-width: 640px) {
+  .kpi-grid { grid-template-columns: repeat(4, 1fr); }
+  .chart-wrap { height: 280px; }
+}

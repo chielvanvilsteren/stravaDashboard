@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Strava Conditie</title>
+
+  <!-- PWA / iOS meta -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Conditie" />
+  <meta name="theme-color" content="#fc4c02" />
+  <meta name="description" content="Jouw hardloop- en fietsconditie op basis van Strava" />
+
+  <!-- Icons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-192.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.json" />
+</head>
+<body>
+
+  <!-- ── Login scherm ──────────────────────────────────────────────────── -->
+  <div id="login-screen" class="screen hidden" role="main" aria-label="Inloggen">
+    <div class="login-container">
+      <div class="login-logo">
+        <span class="logo-run">🏃</span>
+        <span class="logo-bike">🚴</span>
+      </div>
+      <h1>Strava Conditie</h1>
+      <p>Analyseer je hardloop- en fietsdata</p>
+      <a href="/auth/strava" class="btn-strava" id="login-btn">
+        <img src="/icons/strava-logo.svg" alt="" aria-hidden="true" width="20" height="20" />
+        Inloggen met Strava
+      </a>
+      <p class="login-error hidden" id="login-error"></p>
+    </div>
+  </div>
+
+  <!-- ── App (tabs) ────────────────────────────────────────────────────── -->
+  <div id="app-screen" class="screen hidden" role="main">
+
+    <!-- Tab navigation -->
+    <nav class="tab-bar" role="tablist" aria-label="Navigatie">
+      <button class="tab-btn" role="tab" data-tab="overview" aria-selected="false" aria-controls="tab-overview">
+        🏠 <span>Overzicht</span>
+      </button>
+      <button class="tab-btn" role="tab" data-tab="running" aria-selected="false" aria-controls="tab-running">
+        🏃 <span>Hardlopen</span>
+      </button>
+      <button class="tab-btn" role="tab" data-tab="cycling" aria-selected="false" aria-controls="tab-cycling">
+        🚴 <span>Wielrennen</span>
+      </button>
+    </nav>
+
+    <!-- Tab panels -->
+    <main class="tab-content">
+      <section id="tab-overview" role="tabpanel" aria-label="Overzicht" class="tab-panel hidden"></section>
+      <section id="tab-running"  role="tabpanel" aria-label="Hardlopen"  class="tab-panel hidden"></section>
+      <section id="tab-cycling"  role="tabpanel" aria-label="Wielrennen" class="tab-panel hidden"></section>
+    </main>
+
+    <!-- Header toolbar -->
+    <header class="app-header">
+      <span class="app-title">Conditie</span>
+      <button id="sync-btn" class="btn-icon" title="Synchroniseren" aria-label="Activiteiten synchroniseren">⟳</button>
+      <button id="logout-btn" class="btn-icon" title="Uitloggen" aria-label="Uitloggen">⏻</button>
+    </header>
+  </div>
+
+  <!-- ── PWA install banner ─────────────────────────────────────────────── -->
+  <div id="install-banner" class="install-banner hidden" role="alert">
+    <span>Installeer de app op je telefoon voor de beste ervaring.</span>
+    <button id="install-btn">Installeren</button>
+    <button id="install-dismiss" aria-label="Sluiten">✕</button>
+  </div>
+
+  <!-- ── Offline indicator ─────────────────────────────────────────────── -->
+  <div id="offline-indicator" class="offline-banner hidden" role="status" aria-live="polite">
+    📵 Offline — gecachede data wordt getoond
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

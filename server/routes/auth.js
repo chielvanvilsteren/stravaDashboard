@@ -31,25 +31,27 @@ router.post('/login', async (req, res) => {
     return res.status(401).json({ error: 'Ongeldige gebruikersnaam of wachtwoord' });
   }
 
-  req.session.userId = validUsername;
+  res.cookie('uid', validUsername, {
+    signed: true,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dagen
+  });
   res.json({ ok: true });
 });
 
 // ── POST /auth/logout ─────────────────────────────────────────────────────────
 router.post('/logout', (req, res) => {
-  req.session.destroy((err) => {
-    if (err) console.error('Session destroy error:', err);
-    res.clearCookie('connect.sid');
-    res.json({ ok: true });
-  });
+  res.clearCookie('uid');
+  res.json({ ok: true });
 });
 
 // ── GET /auth/me — huidig ingelogde gebruiker ─────────────────────────────────
 router.get('/me', (req, res) => {
-  if (!req.session?.userId) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-  res.json({ username: req.session.userId });
+  const uid = req.signedCookies?.uid;
+  if (!uid) return res.status(401).json({ error: 'Unauthorized' });
+  res.json({ username: uid });
 });
 
 export default router;

@@ -5,7 +5,6 @@ import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import session from 'express-session';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -49,27 +48,12 @@ app.use(
 // ── Body parsers ──────────────────────────────────────────────────────────────
 app.use(express.json({ limit: '100kb' }));
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 
-// ── Server-side session (httpOnly, secure, sameSite strict) ───────────────────
 if (!process.env.SESSION_SECRET) {
   console.error('FATAL: SESSION_SECRET not set');
   process.exit(1);
 }
-
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dagen
-    },
-  })
-);
+app.use(cookieParser(process.env.SESSION_SECRET));
 
 // ── Routes ────────────────────────────────────────────────────────────────────
 // Auth endpoints — rate-limited

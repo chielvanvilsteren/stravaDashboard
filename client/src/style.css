@@ -281,10 +281,10 @@ html, body {
   display: flex; align-items: center; gap: .85rem;
 }
 .kpi-icon { font-size: 1.9rem; flex-shrink: 0; }
-.kpi-text { min-width: 0; }
-.kpi .kpi-value { font-size: 1.5rem; font-weight: 800; line-height: 1; }
-.kpi .kpi-label { font-size: .68rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: .05em; margin-top: 3px; }
-.kpi-delta { font-size: .72rem; font-weight: 600; margin-top: 2px; }
+.kpi-text { min-width: 0; overflow: hidden; }
+.kpi .kpi-value { font-size: 1.4rem; font-weight: 800; line-height: 1.15; word-break: break-word; overflow-wrap: break-word; }
+.kpi .kpi-label { font-size: .65rem; color: var(--color-muted); text-transform: uppercase; letter-spacing: .05em; margin-top: 3px; white-space: normal; word-break: break-word; }
+.kpi-delta { font-size: .7rem; font-weight: 600; margin-top: 2px; word-break: break-word; overflow-wrap: break-word; }
 .orange { color: var(--color-strava); }
 .green  { color: var(--color-success); }
 .blue   { color: var(--color-ride); }

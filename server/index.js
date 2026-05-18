@@ -12,6 +12,7 @@ import { fileURLToPath } from 'url';
 import authRouter from './routes/auth.js';
 import webhookRouter from './routes/webhook.js';
 import activitiesRouter from './routes/activities.js';
+import setupRouter from './routes/setup.js';
 import { authRateLimiter } from './middleware/rateLimiter.js';
 import { requireAuth } from './middleware/requireAuth.js';
 
@@ -73,6 +74,9 @@ app.use(
 // ── Routes ────────────────────────────────────────────────────────────────────
 // Auth endpoints — rate-limited
 app.use('/auth', authRateLimiter, authRouter);
+
+// Strava OAuth setup (eenmalig)
+app.use('/setup', setupRouter);
 
 // Strava webhook — geen auth (Strava belt ons op)
 app.use('/webhook', webhookRouter);

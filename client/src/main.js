@@ -7,7 +7,7 @@
  */
 
 import './style.css';
-import { checkSession } from './auth.js';
+import { checkSession, login } from './auth.js';
 import { initNav } from './nav.js';
 
 // ── Service Worker registratie ────────────────────────────────────────────────
@@ -46,19 +46,28 @@ document.getElementById('install-dismiss').addEventListener('click', () => {
   document.getElementById('install-banner').classList.add('hidden');
 });
 
-// ── Login error uit URL ────────────────────────────────────────────────────────
-const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.get('error')) {
-  const errEl = document.getElementById('login-error');
-  const errorMessages = {
-    access_denied: 'Je hebt de toegang geweigerd. Probeer opnieuw.',
-    auth_failed: 'Inloggen mislukt. Probeer het opnieuw.',
-  };
-  errEl.textContent = errorMessages[urlParams.get('error')] ?? 'Er is een fout opgetreden.';
-  errEl.classList.remove('hidden');
-  // Verwijder error uit URL zonder reload
-  window.history.replaceState({}, '', '/');
-}
+// ── Login form handler ────────────────────────────────────────────────────────
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn    = document.getElementById('login-btn');
+  const errEl  = document.getElementById('login-error');
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+
+  btn.disabled  = true;
+  btn.textContent = 'Bezig…';
+  errEl.classList.add('hidden');
+
+  const result = await login(username, password);
+  if (result.ok) {
+    window.location.reload();
+  } else {
+    errEl.textContent = result.error;
+    errEl.classList.remove('hidden');
+    btn.disabled = false;
+    btn.textContent = 'Inloggen';
+  }
+});
 
 // ── App initialisatie ─────────────────────────────────────────────────────────
 async function init() {

@@ -28,11 +28,21 @@
       </div>
       <h1>Strava Conditie</h1>
       <p>Analyseer je hardloop- en fietsdata</p>
-      <a href="/auth/strava" class="btn-strava" id="login-btn">
-        <img src="/icons/strava-logo.svg" alt="" aria-hidden="true" width="20" height="20" />
-        Inloggen met Strava
-      </a>
-      <p class="login-error hidden" id="login-error"></p>
+
+      <form id="login-form" class="login-form" novalidate>
+        <div class="form-group">
+          <label for="username">Gebruikersnaam</label>
+          <input type="text" id="username" name="username" autocomplete="username"
+                 required placeholder="Gebruikersnaam" />
+        </div>
+        <div class="form-group">
+          <label for="password">Wachtwoord</label>
+          <input type="password" id="password" name="password" autocomplete="current-password"
+                 required placeholder="Wachtwoord" />
+        </div>
+        <button type="submit" class="btn-login" id="login-btn">Inloggen</button>
+        <p class="login-error hidden" id="login-error"></p>
+      </form>
     </div>
   </div>
 

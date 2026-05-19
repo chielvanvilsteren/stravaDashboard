@@ -74,11 +74,17 @@ export async function syncRecentActivities(days = 90) {
   let page = 1, fetched = 0;
 
   while (true) {
-    const activities = await fetchActivitiesPage(accessToken, { after, page });
-    if (!activities.length) break;
-    for (const raw of activities) await upsertActivity(normalizeActivity(raw));
-    fetched += activities.length;
-    if (activities.length < 100) break;
+    const summaries = await fetchActivitiesPage(accessToken, { after, page });
+    if (!summaries.length) break;
+
+    // Haal per activiteit het detail op zodat calories, kilojoules etc. beschikbaar zijn
+    for (const summary of summaries) {
+      const raw = await fetchActivity(accessToken, summary.id);
+      await upsertActivity(normalizeActivity(raw));
+    }
+
+    fetched += summaries.length;
+    if (summaries.length < 100) break;
     page++;
   }
   return { synced: fetched };

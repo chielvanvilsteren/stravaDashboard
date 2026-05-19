@@ -36,9 +36,6 @@ export async function renderOverview(panel, { from, to } = {}) {
     <!-- KPI balk -->
     <div class="kpi-grid" id="ov-kpis"></div>
 
-    <!-- Leuke calorieën vergelijking -->
-    <div class="card" id="ov-fun"></div>
-
     <!-- Wekelijks volume -->
     <div class="card">
       <div class="card-title">Wekelijks volume</div>
@@ -64,8 +61,7 @@ export async function renderOverview(panel, { from, to } = {}) {
     </div>
   `;
 
-  renderKPIs(panel.querySelector('#ov-kpis'), runS, rideS);
-  renderFunCalories(panel.querySelector('#ov-fun'), [...runs, ...rides]);
+  renderKPIs(panel.querySelector('#ov-kpis'), runS, rideS, [...runs, ...rides]);
   await renderWeeklyChart(panel.querySelector('#ov-weekly'), runs, rides);
   renderCalendar(panel.querySelector('#ov-calendar'), runs, rides);
   await renderEfficiencyTrend(panel.querySelector('#ov-trend'), runs, rides);
@@ -73,9 +69,39 @@ export async function renderOverview(panel, { from, to } = {}) {
 }
 
 // ── KPIs ──────────────────────────────────────────────────────────────────────
-function renderKPIs(container, runS, rideS) {
+function renderKPIs(container, runS, rideS, allActivities) {
   const totalHours = ((runS.total_moving_time_s ?? 0) + (rideS.total_moving_time_s ?? 0)) / 3600;
   const totalCal   = (runS.total_calories ?? 0) + (rideS.total_calories ?? 0);
+
+  // Datumspanne voor gemiddelden
+  const dates     = allActivities.map(a => a.activity_date).filter(Boolean).sort();
+  const daySpan   = dates.length > 1
+    ? Math.max(1, (new Date(dates.at(-1)) - new Date(dates[0])) / 86_400_000)
+    : 1;
+  const perDay    = totalCal / daySpan;
+  const perWeek   = perDay * 7;
+  const perMonth  = perDay * 30.44;
+
+  const FOOD = [
+    { emoji: '🍺', label: 'biertjes',     kcal: 150 },
+    { emoji: '🍕', label: 'pizzapunten',  kcal: 300 },
+    { emoji: '🍔', label: 'Big Macs',     kcal: 550 },
+    { emoji: '🥐', label: 'croissants',   kcal: 230 },
+    { emoji: '🍪', label: 'stroopwafels', kcal: 130 },
+  ];
+
+  // Alle staten die doorgelopen worden bij elke klik
+  const states = [
+    { label: '🔥 Calorieën',  value: Math.round(totalCal).toLocaleString('nl-NL'), sub: 'kcal verbrand' },
+    { label: '📅 Gem. per dag',  value: Math.round(perDay).toLocaleString('nl-NL'),   sub: 'kcal / dag' },
+    { label: '📆 Gem. per week', value: Math.round(perWeek).toLocaleString('nl-NL'),  sub: 'kcal / week' },
+    { label: '🗓️ Gem. per maand',value: Math.round(perMonth).toLocaleString('nl-NL'), sub: 'kcal / maand' },
+    ...FOOD.map(f => ({
+      label: `${f.emoji} Equivalent`,
+      value: Math.round(totalCal / f.kcal).toLocaleString('nl-NL'),
+      sub:   f.label,
+    })),
+  ];
 
   container.innerHTML = `
     <div class="kpi-card">
@@ -93,76 +119,31 @@ function renderKPIs(container, runS, rideS) {
       <div class="kpi-value">${totalHours.toFixed(0)}u</div>
       <div class="kpi-sub">dit jaar</div>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-label">🔥 Calorieën</div>
-      <div class="kpi-value">${Math.round(totalCal).toLocaleString('nl-NL')}</div>
-      <div class="kpi-sub">kcal verbrand</div>
+    <div class="kpi-card kpi-card--tappable" id="kpi-cal" title="Tik om te wisselen">
+      <div class="kpi-label" id="kpi-cal-label">${states[0].label}</div>
+      <div class="kpi-value" id="kpi-cal-value">${states[0].value}</div>
+      <div class="kpi-sub" id="kpi-cal-sub">${states[0].sub}</div>
+      <div class="kpi-tap-hint">tik ›</div>
     </div>
   `;
-}
 
-// ── Fun calorieën ──────────────────────────────────────────────────────────────
-function renderFunCalories(container, all) {
-  const totalCal = all.reduce((s, a) => s + (a.calories ?? 0), 0);
+  if (totalCal < 1) return; // geen data → niet interactief maken
 
-  if (totalCal < 10) {
-    container.innerHTML = `
-      <div class="card-title">🔥 Calorieën in context</div>
-      <p class="fun-empty">Nog geen calorieëndata — Strava stuurt dit mee zodra activiteiten gesynchroniseerd zijn.</p>`;
-    return;
-  }
+  let idx = 0;
+  const card  = container.querySelector('#kpi-cal');
+  const lbl   = container.querySelector('#kpi-cal-label');
+  const val   = container.querySelector('#kpi-cal-value');
+  const sub   = container.querySelector('#kpi-cal-sub');
 
-  // Datumspanne voor gemiddelden
-  const dates = all.map(a => a.activity_date).filter(Boolean).sort();
-  const firstDate = new Date(dates[0]);
-  const lastDate  = new Date(dates[dates.length - 1]);
-  const daySpan   = Math.max(1, (lastDate - firstDate) / 86_400_000);
-  const weeks     = Math.max(1, daySpan / 7);
-  const months    = Math.max(1, daySpan / 30.44);
-
-  const perWeek  = Math.round(totalCal / weeks);
-  const perMonth = Math.round(totalCal / months);
-
-  // Equivalenten (kcal per item)
-  const ITEMS = [
-    { emoji: '🍺', name: 'biertjes',    kcal: 150  },
-    { emoji: '🍕', name: 'pizzapunten', kcal: 300  },
-    { emoji: '🍔', name: 'Big Macs',    kcal: 550  },
-    { emoji: '🥐', name: 'croissants',  kcal: 230  },
-    { emoji: '🍪', name: 'stroopwafels',kcal: 130  },
-  ];
-
-  const equivHTML = ITEMS.map(({ emoji, name, kcal }) => {
-    const n = Math.round(totalCal / kcal);
-    return `
-      <div class="fun-item">
-        <span class="fun-emoji">${emoji}</span>
-        <div class="fun-info">
-          <span class="fun-count">${n.toLocaleString('nl-NL')}</span>
-          <span class="fun-name">${name}</span>
-        </div>
-      </div>`;
-  }).join('');
-
-  container.innerHTML = `
-    <div class="card-title">🔥 Calorieën in context</div>
-    <div class="fun-averages">
-      <div class="fun-avg-item">
-        <span class="fun-avg-val">${perWeek.toLocaleString('nl-NL')}</span>
-        <span class="fun-avg-lbl">kcal / week</span>
-      </div>
-      <div class="fun-avg-item">
-        <span class="fun-avg-val">${perMonth.toLocaleString('nl-NL')}</span>
-        <span class="fun-avg-lbl">kcal / maand</span>
-      </div>
-      <div class="fun-avg-item">
-        <span class="fun-avg-val">${Math.round(totalCal).toLocaleString('nl-NL')}</span>
-        <span class="fun-avg-lbl">kcal totaal</span>
-      </div>
-    </div>
-    <p class="fun-intro">Dat zijn in totaal:</p>
-    <div class="fun-grid">${equivHTML}</div>
-  `;
+  card.addEventListener('click', () => {
+    idx = (idx + 1) % states.length;
+    const s = states[idx];
+    card.classList.add('kpi-card--flash');
+    lbl.textContent = s.label;
+    val.textContent = s.value;
+    sub.textContent = s.sub;
+    setTimeout(() => card.classList.remove('kpi-card--flash'), 200);
+  });
 }
 
 // ── Wekelijks volume (gestapeld) ──────────────────────────────────────────────
